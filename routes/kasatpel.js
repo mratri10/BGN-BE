@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
   if (!kecamatan) return res.status(403).json({ error: "Required Kecamatan" });
 
   try {
-    // const keyword = `%${kecamatan}%`; // ← wildcard disusun di sini
-    // const [rows] = await db.query('SELECT * FROM kasatpel WHERE kecamatan LIKE ?', [keyword]);
+    const keyword = `%${kecamatan}%`; // ← wildcard disusun di sini
+    const [rows] = await db.query('SELECT * FROM kasatpel WHERE kecamatan LIKE ?', [keyword]);
     res.json();
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -24,8 +24,8 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /var/www/bgn-be
-            git pull origin main
+            cd /var/www/BGN-BE
+            git pull --ff-only
             npm install
             pm2 restart bgn-be || pm2 start npm --name "bgn-be" -- start
           EOF
