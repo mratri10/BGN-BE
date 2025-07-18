@@ -27,7 +27,9 @@ router.get('/', async (req, res) => {
             id_kabkot,
             ANY_VALUE(kabupaten) AS kabupaten,
             ANY_VALUE(id_kec) AS id_kec,
-            ANY_VALUE(kecamatan) AS kecamatan
+            ANY_VALUE(kecamatan) AS kecamatan,
+            ANY_VALUE(pd_pop) AS pd_pop,
+            ANY_VALUE(plan_kitchen_sum) AS plan_kitchen_sum
           FROM bgn.regional
           WHERE id_kabkot = ?
           GROUP BY id_kec;`;
