@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require('../db');
 
 router.get('/', async (req, res) => {
+  console.log("+++++++++ checkkasatpel")
   const { kecamatan } = req.query;
   if (!kecamatan) return res.status(403).json({ error: "Required Kecamatan" });
 
