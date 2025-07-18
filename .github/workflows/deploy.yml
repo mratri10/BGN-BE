@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy to Server 1
 run: |
     echo "SSH_HOST is: ${{ secrets.SSH_HOST }}"
     echo "SSH_USER is: ${{ secrets.SSH_USER }}"
