@@ -1,4 +1,4 @@
-name: Deploy to Server 12
+name: Deploy to Server
 
 on:
   push:
@@ -8,24 +8,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: first 
+    environment: first
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to server
+      - name: Deploy via SSH
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /var/www/bgn-be
             git pull origin main
             npm install
-            pm2 restart app || pm2 start npm --name "app" -- start
+            pm2 restart bgn-be || pm2 start npm --name "bgn-be" -- start
           EOF
