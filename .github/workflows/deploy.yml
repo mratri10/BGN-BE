@@ -1,4 +1,8 @@
 name: Deploy to Server
+run: |
+    echo "SSH_HOST is: ${{ secrets.SSH_HOST }}"
+    echo "SSH_USER is: ${{ secrets.SSH_USER }}"
+    echo "Private key length: ${#{{ secrets.SSH_PRIVATE_KEY }}}"
 
 on:
   push:
@@ -8,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: first 
 
     steps:
       - name: Checkout Code
