@@ -3,12 +3,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// GET all data
 router.get('/', async (req, res) => {
-  console.log("+++++++ check" )
+  const { kecamatan } = req.query;
+  if (!kecamatan) return res.status(403).json({ error: "Required Kecamatan" });
+
   try {
-    const [rows] = await db.query('SELECT * FROM kasatpel');
-    console.log("+++++++", [rows])
+    const keyword = `%${kecamatan}%`; // ← wildcard disusun di sini
+    const [rows] = await db.query('SELECT * FROM kasatpel WHERE kecamatan LIKE ?', [keyword]);
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
