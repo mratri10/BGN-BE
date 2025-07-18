@@ -1,13 +1,12 @@
-name: Deploy Express.js App to Production
+name: Deploy to Server
 
 on:
   push:
     branches:
-      - main  # or 'master'
+      - main
 
 jobs:
   deploy:
-    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
@@ -23,9 +22,9 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /var/www/your-express-app
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /var/www/bgn-be
             git pull origin main
-            npm install --production
-            pm2 restart all
+            npm install
+            pm2 restart app || pm2 start npm --name "app" -- start
           EOF
