@@ -23,16 +23,21 @@ router.get('/', async (req, res) => {
     params.push(prov);
   } else if (kota) {
     sql = `SELECT 
-            ANY_VALUE(provinsi) AS provinsi,
-            id_kabkot,
-            ANY_VALUE(kabupaten) AS kabupaten,
-            ANY_VALUE(id_kec) AS id_kec,
-            ANY_VALUE(kecamatan) AS kecamatan,
-            ANY_VALUE(pd_pop) AS pd_pop,
-            ANY_VALUE(plan_kitchen_sum) AS plan_kitchen_sum
-          FROM bgn.regional
-          WHERE id_kabkot = ?
-          GROUP BY id_kec;`;
+            r.provinsi, 
+            r.kabupaten, 
+            r.kecamatan, 
+            r.pd_pop, 
+            r.plan_kitchen_sum,
+            CASE 
+              WHEN k.kecamatan IS NOT NULL THEN 1 
+              ELSE 0 
+            END AS jumlah_kecamatan
+          FROM bgn.regional r
+          LEFT JOIN bgn.kasatpel k 
+            ON r.kecamatan LIKE CONCAT('%', k.kecamatan, '%')
+            AND k.kota LIKE '%CILACAP%'
+            AND k.provinsi LIKE CONCAT('%', r.provinsi, '%')
+          WHERE r.kabupaten LIKE '%CILACAP%';`;
     params.push(kota);
   }else{
     sql = `SELECT 
