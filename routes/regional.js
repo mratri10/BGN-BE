@@ -5,7 +5,7 @@ const db = require('../db');
 
 // GET all data
 router.get('/', async (req, res) => {
-  const { prov, kota } = req.query;
+  const { prov, kota, id_kota } = req.query;
   let sql = '';
   const params = [];
 
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     `;
     params.push(prov);
 
-  } else if (kota) {
+  } else if (kota && id_kota) {
     const keyword = `%${kota}%`;
     sql = `
       SELECT 
@@ -32,19 +32,24 @@ router.get('/', async (req, res) => {
         r.kecamatan, 
         r.pd_pop, 
         r.plan_kitchen_sum,
-        CASE 
-          WHEN k.kecamatan IS NOT NULL THEN 1 
-          ELSE 0 
-        END AS jumlah_kecamatan
+        COUNT(k.kecamatan) AS jumlah_kecamatan
       FROM bgn.regional r
       LEFT JOIN bgn.kasatpel k 
         ON r.kecamatan LIKE CONCAT('%', k.kecamatan, '%')
         AND k.kota LIKE ?
         AND k.provinsi LIKE CONCAT('%', r.provinsi, '%')
-      WHERE r.kabupaten LIKE ?;
+      WHERE r.kabupaten LIKE ? 
+        AND r.id_kabkot = ?
+      GROUP BY 
+        r.provinsi, 
+        r.kabupaten, 
+        r.kecamatan, 
+        r.pd_pop, 
+        r.plan_kitchen_sum;
     `;
-    params.push(keyword, keyword); // for k.kota LIKE ? and r.kabupaten LIKE ?
-
+    params.push(keyword);    // for k.kota LIKE ?
+    params.push(keyword);    // for r.kabupaten LIKE ?
+    params.push(id_kota);
   } else {
     sql = `
       SELECT 
